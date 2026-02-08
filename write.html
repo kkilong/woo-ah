@@ -63,13 +63,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 대상 참가자
-const params = new URLSearchParams(location.search);
-const target = params.get("target");
-
-document.getElementById("title").innerText =
-  "참가자 " + target + "에게 키워드 입력";
-
 async function save() {
   const author = document.getElementById("author").value;
   const keyword = document.getElementById("keyword").value.trim();
