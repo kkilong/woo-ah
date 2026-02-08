@@ -10,9 +10,27 @@ body {
   padding: 20px;
 }
 
+/* 로그인 화면 */
+#loginBox {
+  max-width: 300px;
+  margin: 100px auto;
+  text-align: center;
+}
+
+input, select, button {
+  padding: 6px;
+  margin-top: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* 테이블 */
 table {
   border-collapse: collapse;
   width: 100%;
+  margin-top: 20px;
 }
 
 th, td {
@@ -28,7 +46,25 @@ th {
 </head>
 <body>
 
+<!-- 로그인 영역 -->
+<div id="loginBox">
+  <h3>관리자 비밀번호</h3>
+  <input type="password" id="pw" placeholder="비밀번호">
+  <br>
+  <button onclick="login()">확인</button>
+  <p id="loginMsg" style="color:red;"></p>
+</div>
+
+<!-- 관리자 화면 -->
+<div id="adminArea" style="display:none;">
+
 <h2>키워드 전체 현황</h2>
+
+정렬 기준:
+<select id="sortType" onchange="loadData()">
+  <option value="target">대상 기준</option>
+  <option value="author">작성자 기준</option>
+</select>
 
 <table>
   <thead>
@@ -41,19 +77,65 @@ th {
   <tbody id="list"></tbody>
 </table>
 
+</div>
+
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+/* =====================
+   설정
+===================== */
+
+// 간단 비밀번호 (원하는 값으로 변경)
+const ADMIN_PASSWORD = "lagmei";
+
+// 참가자 이름 매핑 (여기 실제 이름으로 바꾸세요)
+const players = {
+  "1": { name: "bless"},
+  "2": { name: "라퓨" },
+  "3": { name: "룩샤" },
+  "4": { name: "근성객기" },
+  "5": { name: "두기" },
+  "6": { name: "로드" },
+  "7": { name: "심해어" },
+  "8": { name: "읺읺" },
+  "9": { name: "재혁" },
+  "10": { name: "지나가는사람" },
+  "11": { name: "케로/미송" },
+  "12": { name: "moro" },
+  "13": { name: "Nyxx" },
+  "14": { name: "끼롱곰" }
+};
+
+
+/* =====================
+   로그인
+===================== */
+
+function login() {
+  const input = document.getElementById("pw").value;
+
+  if (input === ADMIN_PASSWORD) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminArea").style.display = "block";
+    loadData();
+  } else {
+    document.getElementById("loginMsg").innerText = "비밀번호가 틀렸습니다";
+  }
+}
+
+
+/* =====================
+   Firebase
+===================== */
+
 const firebaseConfig = {
   apiKey: "AIzaSyAXLrGMg60B_RB06jQFqwAX3_opHnBhUP8",
-    authDomain: "trpg-keyword-2026.firebaseapp.com",
-    projectId: "trpg-keyword-2026",
-    storageBucket: "trpg-keyword-2026.firebasestorage.app",
-    messagingSenderId: "159506261526",
-    appId: "1:159506261526:web:4bbd67d8b7a9fb969e7737"
+  authDomain: "trpg-keyword-2026.firebaseapp.com",
+  projectId: "trpg-keyword-2026",
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -61,28 +143,47 @@ const db = firebase.firestore();
 
 const tbody = document.getElementById("list");
 
-// 실시간 조회
-db.collection("keywords")
-  .orderBy("target")
-  .onSnapshot(snapshot => {
 
-    tbody.innerHTML = "";
+/* =====================
+   데이터 로드
+===================== */
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
+function loadData() {
 
-      const tr = document.createElement("tr");
+  const sortType = document.getElementById("sortType").value;
 
-      tr.innerHTML = `
-        <td>${data.target}</td>
-        <td>${data.author}</td>
-        <td>${data.keyword}</td>
-      `;
+  db.collection("keywords")
+    .onSnapshot(snapshot => {
 
-      tbody.appendChild(tr);
+      let dataArray = [];
+
+      snapshot.forEach(doc => {
+        dataArray.push(doc.data());
+      });
+
+      // 숫자 기준 정렬 (1,2,3...14)
+      dataArray.sort((a, b) => {
+        return Number(a[sortType]) - Number(b[sortType]);
+      });
+
+      // 테이블 출력
+      tbody.innerHTML = "";
+
+      dataArray.forEach(data => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${players[data.target]}</td>
+          <td>${players[data.author]}</td>
+          <td>${data.keyword}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
     });
+}
 
-  });
 </script>
 
 </body>
