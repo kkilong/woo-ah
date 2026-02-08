@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>참가자 키워드</title>
+</head>
+<body>
+
+<h2 id="title"></h2>
+
+<div id="keywords"></div>
+
+<br><br>
+
+<button id="profileBtn">기존 캐릭터 보기</button>
+<button id="writeBtn">압류 키워드 입력</button>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "trpg-keyword-2026.firebaseapp.com",
+  projectId: "trpg-keyword-2026",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// URL에서 참가자 이름 가져오기
+const params = new URLSearchParams(location.search);
+const name = params.get("name");
+
+document.getElementById("title").innerText = "참가자 " + name + "의 압류 키워드";
+
+// Firestore에서 키워드 불러오기
+db.collection("keywords")
+  .where("target", "==", name)
+  .get()
+  .then(snapshot => {
+    const box = document.getElementById("keywords");
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const div = document.createElement("div");
+      div.innerText = data.keyword;
+      div.style.border = "1px solid #aaa";
+      div.style.display = "inline-block";
+      div.style.margin = "5px";
+      div.style.padding = "8px";
+      div.style.borderRadius = "20px";
+      box.appendChild(div);
+    });
+  });
+
+// 버튼 기능
+document.getElementById("writeBtn").onclick = () => {
+  location.href = "write.html?target=" + name;
+};
+
+// 기존 프로필 주소 (여기만 나중에 실제 링크로 바꾸면 됨)
+document.getElementById("profileBtn").onclick = () => {
+  location.href = "https://test.com/" + name;
+};
+</script>
+
+</body>
+</html>
