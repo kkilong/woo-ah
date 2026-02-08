@@ -68,19 +68,67 @@ async function save() {
   const keyword = document.getElementById("keyword").value.trim();
   const msg = document.getElementById("msg");
 
+  msg.innerText = "";
+  msg.style.color = "red";
+
   if (!keyword) {
     msg.innerText = "키워드를 입력하세요";
     return;
   }
 
-  await db.collection("keywords").add({
-    author: author,
-    target: target,
-    keyword: keyword,
-    createdAt: new Date()
-  });
+  try {
 
-  msg.innerText = "저장되었습니다";
+    // 1️⃣ 대상에게 이미 같은 키워드가 있는지
+    const sameTarget = await db.collection("keywords")
+      .where("target", "==", target)
+      .where("keyword", "==", keyword)
+      .get();
+
+    if (!sameTarget.empty) {
+      msg.innerText = "이미 접수된 키워드입니다";
+      return;
+    }
+
+
+    // 2️⃣ 같은 작성자가 이 대상에게 이미 제출했는지
+    const alreadySubmitted = await db.collection("keywords")
+      .where("author", "==", author)
+      .where("target", "==", target)
+      .get();
+
+    if (!alreadySubmitted.empty) {
+      msg.innerText = "이미 해당 참가자에게 키워드를 제출하셨습니다";
+      return;
+    }
+
+
+    // 3️⃣ 같은 작성자가 다른 대상에게 같은 키워드 썼는지
+    const sameAuthorKeyword = await db.collection("keywords")
+      .where("author", "==", author)
+      .where("keyword", "==", keyword)
+      .get();
+
+    if (!sameAuthorKeyword.empty) {
+      msg.innerText = "중복 키워드 제출이 불가능합니다";
+      return;
+    }
+
+
+    // ✅ 저장
+    await db.collection("keywords").add({
+      author: author,
+      target: target,
+      keyword: keyword,
+      createdAt: new Date()
+    });
+
+    msg.style.color = "green";
+    msg.innerText = "저장되었습니다";
+    document.getElementById("keyword").value = "";
+
+  } catch (e) {
+    msg.innerText = "에러: " + e.message;
+  }
 }
 </script>
 
