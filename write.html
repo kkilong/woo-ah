@@ -28,26 +28,23 @@
 
 <script>
   // 참가자 목록 (나중에 이름으로 바꿔도 됨)
-const players = [
-  "1","2","3","4","5","6","7",
-  "8","9","10","11","12","13","14"
-];
+const playerName = players[target].name;
 
 // URL에서 대상자 가져오기
 const params = new URLSearchParams(location.search);
 const target = params.get("target");
 
 document.getElementById("title").innerText =
-  "참가자 " + target + "에게 키워드 입력";
+  playerName + "에게 키워드 입력";
 
 // 드롭다운 생성 (target 제외)
 const select = document.getElementById("author");
 
-players.forEach(p => {
+Object.keys(players).forEach(p => {
   if (p !== target) {
     const option = document.createElement("option");
-    option.value = p;
-    option.textContent = p;
+    option.value = p; // Firestore에는 번호 저장 (안전)
+    option.textContent = players[p].name; // 화면에는 이름
     select.appendChild(option);
   }
 });
