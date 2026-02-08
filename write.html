@@ -9,12 +9,7 @@
 <h2 id="title"></h2>
 
 작성자:
-<select id="author">
-  <option>1</option>
-  <option>2</option>
-  <option>3</option>
-  <option>4</option>
-</select>
+<select id="author"></select>
 
 <br><br>
 
@@ -32,10 +27,37 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
+  // 참가자 목록 (나중에 이름으로 바꿔도 됨)
+const players = [
+  "1","2","3","4","5","6","7",
+  "8","9","10","11","12","13","14"
+];
+
+// URL에서 대상자 가져오기
+const params = new URLSearchParams(location.search);
+const target = params.get("target");
+
+document.getElementById("title").innerText =
+  "참가자 " + target + "에게 키워드 입력";
+
+// 드롭다운 생성 (target 제외)
+const select = document.getElementById("author");
+
+players.forEach(p => {
+  if (p !== target) {
+    const option = document.createElement("option");
+    option.value = p;
+    option.textContent = p;
+    select.appendChild(option);
+  }
+});
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "trpg-keyword-2026.firebaseapp.com",
-  projectId: "trpg-keyword-2026",
+  apiKey: "AIzaSyAXLrGMg60B_RB06jQFqwAX3_opHnBhUP8",
+    authDomain: "trpg-keyword-2026.firebaseapp.com",
+    projectId: "trpg-keyword-2026",
+    storageBucket: "trpg-keyword-2026.firebasestorage.app",
+    messagingSenderId: "159506261526",
+    appId: "1:159506261526:web:4bbd67d8b7a9fb969e7737",
 };
 
 firebase.initializeApp(firebaseConfig);
