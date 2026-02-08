@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Firestore Test</title>
+</head>
+<body>
+
+<h2>키워드 입력 테스트</h2>
+
+입력자:
+<select id="author">
+  <option>A</option>
+  <option>B</option>
+  <option>C</option>
+</select>
+
+<br><br>
+
+대상자:
+<select id="target">
+  <option>A</option>
+  <option>B</option>
+  <option>C</option>
+</select>
+
+<br><br>
+
+키워드:
+<input id="keyword" type="text">
+
+<br><br>
+
+<button onclick="saveKeyword()">저장</button>
+
+<p id="msg"></p>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAXLrGMg60B_RB06jQFqwAX3_opHnBhUP8",
+  authDomain: "trpg-keyword-2026.firebaseapp.com",
+  projectId: "trpg-keyword-2026",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+
+async function saveKeyword() {
+  const author = document.getElementById("author").value;
+  const target = document.getElementById("target").value;
+  const keyword = document.getElementById("keyword").value.trim();
+
+  if (!keyword) {
+    document.getElementById("msg").innerText = "키워드를 입력하세요";
+    return;
+  }
+
+  try {
+    await db.collection("keywords").add({
+      author: author,
+      target: target,
+      keyword: keyword,
+      createdAt: new Date()
+    });
+
+    document.getElementById("msg").innerText = "저장 성공";
+  } catch (e) {
+    document.getElementById("msg").innerText = "에러: " + e.message;
+  }
+}
+</script>
+
+</body>
+</html>
