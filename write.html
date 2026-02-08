@@ -78,43 +78,70 @@ async function save() {
 
   try {
 
-    // 1️⃣ 대상에게 이미 같은 키워드가 있는지
+    // 1️⃣ 대상에게 이미 같은 키워드가 있는지 검사
     const sameTarget = await db.collection("keywords")
       .where("target", "==", target)
       .where("keyword", "==", keyword)
       .get();
 
     if (!sameTarget.empty) {
-      msg.innerText = "이미 접수된 키워드입니다";
-      return;
+      // 단, 그게 자기 자신의 기존 제출이면 허용해야 함
+      let conflict = false;
+      sameTarget.forEach(doc => {
+        if (doc.data().author !== author) {
+          conflict = true;
+        }
+      });
+
+      if (conflict) {
+        msg.innerText = "이미 접수된 키워드입니다";
+        return;
+      }
     }
 
 
-    // 2️⃣ 같은 작성자가 이 대상에게 이미 제출했는지
-    const alreadySubmitted = await db.collection("keywords")
-      .where("author", "==", author)
-      .where("target", "==", target)
-      .get();
-
-    if (!alreadySubmitted.empty) {
-      msg.innerText = "이미 해당 참가자에게 키워드를 제출하셨습니다";
-      return;
-    }
-
-
-    // 3️⃣ 같은 작성자가 다른 대상에게 같은 키워드 썼는지
+    // 2️⃣ 같은 작성자가 다른 대상에게 같은 키워드 사용했는지
     const sameAuthorKeyword = await db.collection("keywords")
       .where("author", "==", author)
       .where("keyword", "==", keyword)
       .get();
 
-    if (!sameAuthorKeyword.empty) {
+    let usedElsewhere = false;
+    sameAuthorKeyword.forEach(doc => {
+      if (doc.data().target !== target) {
+        usedElsewhere = true;
+      }
+    });
+
+    if (usedElsewhere) {
       msg.innerText = "중복 키워드 제출이 불가능합니다";
       return;
     }
 
 
-    // ✅ 저장
+    // 3️⃣ 이미 이 author → target 데이터가 있는지 확인
+    const existing = await db.collection("keywords")
+      .where("author", "==", author)
+      .where("target", "==", target)
+      .get();
+
+
+    if (!existing.empty) {
+      // 🔁 수정(update)
+      const docId = existing.docs[0].id;
+
+      await db.collection("keywords").doc(docId).update({
+        keyword: keyword,
+        updatedAt: new Date()
+      });
+
+      msg.style.color = "green";
+      msg.innerText = "기존 키워드를 수정했습니다";
+      return;
+    }
+
+
+    // 4️⃣ 없으면 새로 저장
     await db.collection("keywords").add({
       author: author,
       target: target,
