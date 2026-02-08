@@ -2,18 +2,65 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>참가자 키워드</title>
+<title>참가자</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+  text-align: center;
+}
+
+/* 키워드 영역 */
+#cloud {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  overflow: hidden;
+}
+
+/* 플로팅 카드 */
+.keyword {
+  position: absolute;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px);
+  font-size: 14px;
+}
+
+/* 하단 버튼 영역 */
+.bottom {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+.btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: #eee;
+  text-decoration: none;
+  color: black;
+}
+</style>
 </head>
 <body>
 
 <h2 id="title"></h2>
 
-<div id="keywords"></div>
+<div id="cloud"></div>
 
-<br><br>
-
-<button id="profileBtn">기존 캐릭터 보기</button>
-<button id="writeBtn">압류 키워드 입력</button>
+<div class="bottom">
+  <a id="profileBtn" class="btn">기존 캐릭터 보기</a>
+  <a id="writeBtn" class="btn">압류 키워드 입력</a>
+</div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -21,48 +68,62 @@
 
 <script>
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyAXLrGMg60B_RB06jQFqwAX3_opHnBhUP8",
   authDomain: "trpg-keyword-2026.firebaseapp.com",
-  projectId: "trpg-keyword-2026",
+  projectId: "trpg-keyword-2026"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// URL에서 참가자 이름 가져오기
+// 대상자
 const params = new URLSearchParams(location.search);
-const name = params.get("name");
+const target = params.get("target");
 
-document.getElementById("title").innerText = "참가자 " + name + "의 압류 키워드";
+document.getElementById("title").innerText =
+  "참가자 " + target;
 
-// Firestore에서 키워드 불러오기
-db.collection("keywords")
-  .where("target", "==", name)
-  .get()
-  .then(snapshot => {
-    const box = document.getElementById("keywords");
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.innerText = data.keyword;
-      div.style.border = "1px solid #aaa";
-      div.style.display = "inline-block";
-      div.style.margin = "5px";
-      div.style.padding = "8px";
-      div.style.borderRadius = "20px";
-      box.appendChild(div);
-    });
+// 버튼 연결
+document.getElementById("writeBtn").href =
+  "write.html?target=" + target;
+
+// 지금은 테스트용 (나중에 실제 프로필로 교체)
+document.getElementById("profileBtn").href =
+  "https://test.com/" + target;
+
+
+// 키워드 표시 함수
+function showKeywords(list) {
+  const cloud = document.getElementById("cloud");
+  cloud.innerHTML = "";
+
+  const w = cloud.clientWidth;
+  const h = cloud.clientHeight;
+
+  list.forEach(text => {
+    const div = document.createElement("div");
+    div.className = "keyword";
+    div.innerText = text;
+
+    // 랜덤 위치
+    div.style.left = Math.random() * (w - 100) + "px";
+    div.style.top = Math.random() * (h - 40) + "px";
+
+    cloud.appendChild(div);
   });
+}
 
-// 버튼 기능
-document.getElementById("writeBtn").onclick = () => {
-  location.href = "write.html?target=" + name;
-};
 
-// 기존 프로필 주소 (여기만 나중에 실제 링크로 바꾸면 됨)
-document.getElementById("profileBtn").onclick = () => {
-  location.href = "https://test.com/" + name;
-};
+// Firestore 실시간 조회
+db.collection("keywords")
+  .where("target", "==", target)
+  .onSnapshot(snapshot => {
+    const list = [];
+    snapshot.forEach(doc => {
+      list.push(doc.data().keyword);
+    });
+    showKeywords(list);
+  });
 </script>
 
 </body>
