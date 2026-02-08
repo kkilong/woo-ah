@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>관리자 페이지</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #f2f2f2;
+}
+</style>
+</head>
+<body>
+
+<h2>키워드 전체 현황</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>대상</th>
+      <th>작성자</th>
+      <th>키워드</th>
+    </tr>
+  </thead>
+  <tbody id="list"></tbody>
+</table>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAXLrGMg60B_RB06jQFqwAX3_opHnBhUP8",
+    authDomain: "trpg-keyword-2026.firebaseapp.com",
+    projectId: "trpg-keyword-2026",
+    storageBucket: "trpg-keyword-2026.firebasestorage.app",
+    messagingSenderId: "159506261526",
+    appId: "1:159506261526:web:4bbd67d8b7a9fb969e7737"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const tbody = document.getElementById("list");
+
+// 실시간 조회
+db.collection("keywords")
+  .orderBy("target")
+  .onSnapshot(snapshot => {
+
+    tbody.innerHTML = "";
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${data.target}</td>
+        <td>${data.author}</td>
+        <td>${data.keyword}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  });
+</script>
+
+</body>
+</html>
