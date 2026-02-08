@@ -81,20 +81,40 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+  const players = {
+  "1": { name: "bless", link: "https://docs.google.com/spreadsheets/d/1w9egpFsL-ZzSoVW-wBif-bGbCVlC31naWHf6y2PDA3k/edit?gid=1280759504#gid=1280759504" },
+  "2": { name: "라퓨", link: "https://docs.google.com/spreadsheets/d/1qgynnvIv3kyE5hr0zkeBaKbO4W-xzacvjvkMab2zr0Q/edit?usp=sharing" },
+  "3": { name: "룩샤", link: "https://docs.google.com/spreadsheets/d/18MFZDSdoScIa5KRU5e-WCy8gsyYV8p624BX8ogdXrts/edit?gid=542956617#gid=542956617" },
+  "4": { name: "근성객기", link: "https://docs.google.com/spreadsheets/d/1V_feDMJtKweKwOAqQ2szfMAevOgDpDjO4YXKmw7Y1jc/edit?gid=461907442#gid=461907442" },
+  "5": { name: "두기", link: "https://docs.google.com/spreadsheets/d/1Jh0SQIlrUlNSFR1EOEUiDmB_R665bWObKpLTD0GVeHk/edit?usp=sharing" },
+  "6": { name: "로드", link: "https://docs.google.com/spreadsheets/d/14z30_sKocNk7GkjTg_vjGObRFonas1s3rbZILe0C-58/edit?usp=sharing" },
+  "7": { name: "심해어", link: "https://docs.google.com/spreadsheets/d/1WP5Y9ufFeLeMDehVD9fLQ68cmueraWkYq8Wqg9OGPq0/edit?usp=sharing" },
+  "8": { name: "읺읺", link: "https://docs.google.com/spreadsheets/d/1UCvnHzEMqCTmQdanIkMgTYtSCIpg94lA9oMIiIZS3m4/edit?gid=0#gid=0" },
+  "9": { name: "재혁", link: "https://docs.google.com/spreadsheets/d/1oMUKS2qFX26K4bl9STUuuy3bOLXyd8PJ6JgsVGJDPjs/edit?usp=sharing" },
+  "10": { name: "지나가는사람", link: "https://docs.google.com/spreadsheets/d/1_-BbQrFHbbI_J-uYkLkhzmWNBWRJcgxnKr7VIzQ0SoI/edit?gid=0#gid=0" },
+  "11": { name: "케로/미송", link: "https://docs.google.com/spreadsheets/d/1L3NTexknm6yFR2xGDiCxupe8qCdeNBjL2_sMsCplOR8/edit?usp=drivesdk" },
+  "12": { name: "moro", link: "https://docs.google.com/spreadsheets/d/1Ek-iU7lyOjE8hFVlx1NMPJFjTMoXw2OOBp--39UtcE4/edit?gid=1186439431#gid=1186439431" },
+  "13": { name: "Nyxx", link: "https://docs.google.com/spreadsheets/d/1ogFTOulrvqKdchvL7vL2Mmigags4ACfeKr5BUjGYzuY/edit?usp=sharing" },
+  "14": { name: "끼롱곰", link: "https://docs.google.com/spreadsheets/d/1AyFcoLn800EVrNnFN3HP7QD5VYPYETJeLP3g6BQRCFk/edit?usp=sharing" }
+};
+
 // 대상자
 const params = new URLSearchParams(location.search);
 const target = params.get("target");
 
+const playerName = players[target].name;
+
 document.getElementById("title").innerText =
-  "참가자 " + target;
+  playerName;
 
 // 버튼 연결
 document.getElementById("writeBtn").href =
   "write.html?target=" + target;
 
 // 지금은 테스트용 (나중에 실제 프로필로 교체)
-document.getElementById("profileBtn").href =
-  "https://test.com/" + target;
+document.getElementById("profileBtn").onclick = function() {
+  window.open(players[target].link, "_blank");
+};
 
 
 // 키워드 표시 함수
