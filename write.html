@@ -3,6 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>키워드 입력</title>
+  <style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 40px;
+}
+
+button {
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #357abd;
+}
+
+select, input {
+  padding: 8px;
+  font-size: 14px;
+}
+</style>
 </head>
 <body>
 
@@ -27,13 +53,29 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-  // 참가자 목록 (나중에 이름으로 바꿔도 됨)
-const playerName = players[target].name;
+  const players = {
+  "1": { name: "bless"},
+  "2": { name: "라퓨" },
+  "3": { name: "룩샤" },
+  "4": { name: "근성객기" },
+  "5": { name: "두기" },
+  "6": { name: "로드" },
+  "7": { name: "심해어" },
+  "8": { name: "읺읺" },
+  "9": { name: "재혁" },
+  "10": { name: "지나가는사람" },
+  "11": { name: "케로/미송" },
+  "12": { name: "moro" },
+  "13": { name: "Nyxx" },
+  "14": { name: "끼롱곰" }
+};
+
 
 // URL에서 대상자 가져오기
 const params = new URLSearchParams(location.search);
 const target = params.get("target");
 
+  const playerName = players[target].name;
 document.getElementById("title").innerText =
   playerName + "에게 키워드 입력";
 
