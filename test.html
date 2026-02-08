@@ -108,6 +108,25 @@ async function saveKeyword() {
     msg.style.color = "red";
   }
 }
+
+  async function loadKeywords() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  const snapshot = await db.collection("keywords")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+
+    const li = document.createElement("li");
+    li.innerText = `${data.author} → ${data.target} : ${data.keyword}`;
+
+    list.appendChild(li);
+  });
+}
+  loadKeywords();
 </script>
 
 </body>
