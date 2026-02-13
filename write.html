@@ -191,7 +191,41 @@ async function save() {
     msg.style.color = "green";
     msg.innerText = "저장되었습니다";
     document.getElementById("keyword").value = "";
+// ======================
+// ⏰ 제출 마감 설정
+// 한국시간: 2026-02-14 09:00
+// ======================
 
+(function () {
+  const deadline = new Date("2026-02-14T09:00:00+09:00");
+  const now = new Date();
+
+  if (now >= deadline) {
+    const author = document.getElementById("author");
+    const keyword = document.getElementById("keyword");
+    const button = document.querySelector("button");
+    const msg = document.getElementById("msg");
+
+    if (author) author.disabled = true;
+    if (keyword) keyword.disabled = true;
+
+    if (button) {
+      button.disabled = true;
+      button.style.opacity = "0.5";
+      button.style.cursor = "not-allowed";
+    }
+
+    if (msg) {
+      msg.innerText = "키워드 제출 기간이 종료되었습니다";
+      msg.style.color = "gray";
+    }
+
+    // 혹시 JS로 save() 직접 호출되는 경우도 차단
+    window.save = function () {
+      return;
+    };
+  }
+})();
   } catch (e) {
     msg.innerText = "에러: " + e.message;
   }
