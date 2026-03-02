@@ -165,12 +165,11 @@ db.collection("keywords")
 
 // ===== 버튼 연결 =====
 
-// 기존 캐릭터 페이지
-document.getElementById("profileBtn").href = "profile" + target + ".html";
-
-// 완성 캐릭터 페이지
-document.getElementById("characterBtn").href =
-  "character" + target + ".html";
+document.getElementById("profileBtn").onclick = function() {
+  window.open(players[target].link, "_blank");
+};
+document.getElementById("characterBtn").addEventListener("click", () => { const page = characterPages[target]; 
+                                                                         if (page) { window.location.href = page; } });
 </script>
 
 </body>
