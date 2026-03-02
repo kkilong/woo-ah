@@ -167,7 +167,10 @@ document.getElementById("profileBtn").href = "profile" + target + ".html";
 
 // 완성 캐릭터 페이지
 document.getElementById("characterBtn").addEventListener("click", () => {
-  window.location.href = "character" + target + ".html";
+  const page = characterPages[target];
+  if (page) {
+    window.location.href = page;
+  }
 });
 </script>
 
