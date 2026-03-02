@@ -166,12 +166,8 @@ db.collection("keywords")
 document.getElementById("profileBtn").href = "profile" + target + ".html";
 
 // 완성 캐릭터 페이지
-document.getElementById("characterBtn").addEventListener("click", () => {
-  const page = characterPages[target];
-  if (page) {
-    window.location.href = page;
-  }
-});
+document.getElementById("characterBtn").href =
+  "character" + target + ".html";
 </script>
 
 </body>
